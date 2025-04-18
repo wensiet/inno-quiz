@@ -1,0 +1,72 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
+
+[tool.mypy]
+plugins = ["pydantic.mypy", "sqlalchemy.ext.mypy.plugin"]
+
+[tool.poetry]
+authors = ["Iskander Shamsutdinov <wensietyt@gmail.com>"]
+description = "InnoQuiz platform"
+name = "inno-quiz"
+readme = "README.md"
+version = "0.1.0"
+
+[tool.poetry.dependencies]
+alembic = "1.15.2"
+fastapi = "0.115.12"
+psycopg2-binary = "2.9.10"
+pydantic = "2.11.3"
+pydantic-settings = "2.8.1"
+python = "~3.12"
+redis = "5.2.1"
+sqlalchemy = "2.0.40"
+uvicorn = "0.34.0"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "1.15.0"
+pytest = "8.3.5"
+pytest-cov = "6.1.1"
+ruff = "0.11.4"
+toml-sort = "0.24.2"
+
+[tool.pytest.ini_options]
+addopts = "--verbose --disable-warnings --cov=. --cov-report=term-missing --cov-fail-under=60"
+
+[tool.ruff]
+indent-width = 4
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.format]
+indent-style = "space"
+line-ending = "auto"
+quote-style = "double"
+skip-magic-trailing-comma = false
+
+[tool.ruff.lint]
+extend-ignore = [
+  "ANN204",
+  "ANN401",
+  "B008"
+]
+extend-select = [
+  "A",
+  "ANN",
+  "B",
+  "C",
+  "E",
+  "ERA",
+  "F",
+  "I",
+  "N",
+  "PL",
+  "PT",
+  "RUF",
+  "S",
+  "T20",
+  "UP"
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/{tests}/*" = ["ANN"]
