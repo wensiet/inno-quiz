@@ -35,5 +35,8 @@ jobs:
         fi
 
     - name: Run pytest with coverage
-      run: |
-        poetry run pytest --cov=src --cov-fail-under=60 --disable-warnings
+      run: poetry run pytest --cov=src --cov-fail-under=60 --disable-warnings
+      env:
+        ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+        APP_NAME: ${{ vars.APP_NAME }}
+        APP_DESCRIPTION: ${{ vars.APP_DESCRIPTION }}
