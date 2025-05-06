@@ -25,7 +25,7 @@ jobs:
         echo "$HOME/.local/bin" >> $GITHUB_PATH
 
     - name: Install dependencies
-      run: poetry install
+      run: poetry install --no-root
 
     - name: Run flake8 (fail on warnings)
       run: |
