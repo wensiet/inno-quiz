@@ -40,3 +40,6 @@ jobs:
         ENVIRONMENT: ${{ vars.ENVIRONMENT }}
         APP_NAME: ${{ vars.APP_NAME }}
         APP_DESCRIPTION: ${{ vars.APP_DESCRIPTION }}
+        APP_VERSION: ${{ vars.APP_VERSION }}
+        SECRET_KEY: ${{ vars.SECRET_KEY }}
+        DATABASE_URL: ${{ vars.DATABASE_URL }}
