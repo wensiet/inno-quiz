@@ -4,8 +4,10 @@ from logging.config import fileConfig
 from sqlalchemy import create_engine
 
 from alembic import context
+from src.models.base import Base
+from src.models.quiz import *
+from src.models.user import *
 from src.settings.database import sqlite_database_settings as database_settings
-from src.utils.orm import Base
 
 # from celery.backends.database.session import ResultModelBase  # noqa: ERA001
 
