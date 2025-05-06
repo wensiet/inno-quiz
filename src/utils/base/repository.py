@@ -32,7 +32,10 @@ class BaseRepository(Generic[T]):
                 if column is not None:
                     if operator == "like":
                         query = query.filter(column.like(value))
-                    elif isinstance(value, (int | float | Decimal | datetime.datetime)):
+                    elif isinstance(
+                        value,
+                        (int | float | Decimal | datetime.datetime)
+                    ):
                         op = {
                             "gt": operators.gt,
                             "ge": operators.ge,
@@ -43,9 +46,12 @@ class BaseRepository(Generic[T]):
                         if op:
                             query = query.filter(op(column, value))
                         else:
-                            raise TypeError(f"Unsupported operator: {operator}")
+                            raise TypeError(f"Unsupported operator: {operator}"
+                                            )
                     else:
-                        raise TypeError(f"Unsupported operator {operator} for column {key}")
+                        raise TypeError(
+                            f"Unsupported operator {operator} for column {key}"
+                        )
                 else:
                     raise AttributeError(
                         f"Column {column_name} not found in {self.orm_model.__name__}",
@@ -67,7 +73,9 @@ class BaseRepository(Generic[T]):
         stmt = sqlalchemy.select(self.orm_model).filter_by(**kwargs).with_for_update()  # type: ignore[arg-type]
         return self.session.execute(stmt).scalars().one()
 
-    def get_multi(self, limit: int = 10, offset: int = 0, **filters: Any) -> tuple[list[T], int]:
+    def get_multi(
+        self, limit: int = 10, offset: int = 0, **filters: Any
+    ) -> tuple[list[T], int]:
         query = self._build_query(**filters)
         stmt = query.limit(limit).offset(offset)
         results = self.session.execute(stmt).scalars().all()

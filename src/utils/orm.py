@@ -4,10 +4,14 @@ from collections.abc import Generator
 from contextlib import contextmanager
 
 import sqlalchemy
-from sqlalchemy import Boolean, Column, QueuePool, String
-from sqlalchemy.orm import Mapped, Session, mapped_column
+from sqlalchemy import Boolean, Column, String, create_engine
+from sqlalchemy.orm import Mapped, Session, mapped_column, sessionmaker
 
-from src.settings.database import database_settings
+try:
+    from src.settings.database_override import \
+        sqlite_database_settings as database_settings
+except ImportError:
+    from src.settings.database import database_settings
 
 
 class Base(sqlalchemy.orm.DeclarativeBase):
@@ -35,22 +39,32 @@ class AvailableMixin:
     available = Column(Boolean, default=True, nullable=False)
 
 
-engine = sqlalchemy.create_engine(
-    database_settings.dsn,
-    poolclass=QueuePool,
-    pool_size=database_settings.pool_size,
-    pool_timeout=database_settings.pool_timeout,
-    max_overflow=database_settings.max_overflow,
+# Use standard database URL
+db_url = database_settings.dsn
+
+# Configure engine based on database type
+connect_args = {}
+if "sqlite" in db_url:
+    connect_args = {"check_same_thread": False}
+
+engine = create_engine(
+    db_url,
+    connect_args=connect_args,
+    echo=False,
+)
+
+SessionLocal = sessionmaker(
+    bind=engine,
+    expire_on_commit=False,
+    autocommit=False,
+    autoflush=False,
 )
 
 
-def session_factory() -> Session:
-    return sqlalchemy.orm.sessionmaker(bind=engine)()
-
-
 @contextmanager
-def session_scope() -> Generator[Session, None, None]:
-    session = session_factory()
+def get_db_session() -> Generator[Session, None, None]:
+    """Provide a database session."""
+    session = SessionLocal()
     try:
         yield session
     except Exception:
