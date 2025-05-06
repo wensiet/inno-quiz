@@ -11,6 +11,7 @@ description = "InnoQuiz platform"
 name = "inno-quiz"
 readme = "README.md"
 version = "0.1.0"
+package-mode = false
 
 [tool.poetry.dependencies]
 aiosqlite = "^0.20.0"
@@ -89,3 +90,6 @@ extend-select = [
 
 [tool.ruff.lint.per-file-ignores]
 "**/{tests}/*" = ["ANN"]
+
+[tool.flake8]
+max-line-length = 120

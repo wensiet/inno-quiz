@@ -1,0 +1,45 @@
+name: CI for tests, linters
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      run: poetry install --no-root
+
+    - name: Run flake8 (fail on warnings)
+      run: |
+        poetry run flake8 src tests --exit-zero | tee flake8.log
+        if grep -q . flake8.log; then
+          echo "flake8 found issues"; exit 1;
+        fi
+
+    - name: Run pytest with coverage
+      run: poetry run pytest --cov=src --cov-fail-under=60 --disable-warnings
+      env:
+        ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+        APP_NAME: ${{ vars.APP_NAME }}
+        APP_DESCRIPTION: ${{ vars.APP_DESCRIPTION }}
+        APP_VERSION: ${{ vars.APP_VERSION }}
+        SECRET_KEY: ${{ vars.SECRET_KEY }}
+        DATABASE_URL: ${{ vars.DATABASE_URL }}
