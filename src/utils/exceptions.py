@@ -1,6 +1,5 @@
 from enum import StrEnum
 from typing import Any
-from uuid import uuid4
 
 from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
@@ -26,7 +25,10 @@ class HttpError(HTTPException):
     detail: str = "Http exception."
 
     def __init__(self, detail: str = "") -> None:
-        super().__init__(status_code=self.status_code, detail=detail or self.detail)
+        super().__init__(
+            status_code=self.status_code,
+            detail=detail or self.detail
+        )
 
 
 class ForbiddenError(HttpError):
@@ -57,20 +59,8 @@ class APIErrorResponse(BaseModel):
 
 
 def http_exception_handler(_: Request, exc: HTTPException) -> Response:
+    """Handle HTTP exceptions and return a standardized response."""
     return JSONResponse(
         status_code=exc.status_code,
-        content=APIErrorResponse(
-            id=str(uuid4()),
-            message="Something went wrong",
-            system_error=exc.detail,
-            error_code=ErrorCode(
-                {
-                    400: ErrorCode.BAD_REQUEST,
-                    401: ErrorCode.UNAUTHORIZED,
-                    403: ErrorCode.FORBIDDEN,
-                    404: ErrorCode.NOT_FOUND,
-                    409: ErrorCode.CONFLICT,
-                }.get(exc.status_code, "UNKNOWN")
-            ),
-        ).model_dump(),
+        content={"detail": exc.detail},
     )

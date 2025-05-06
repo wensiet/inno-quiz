@@ -6,7 +6,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from src.utils.exceptions import UnauthorizedError
-from src.utils.orm import session_scope
+from src.utils.orm import get_db_session
 
 bearer_scheme = HTTPBearer(
     scheme_name="Bearer",
@@ -16,8 +16,9 @@ bearer_scheme = HTTPBearer(
 )
 
 
-def get_session() -> Generator[Session, None, None]:
-    with session_scope() as session:
+def get_db() -> Generator[Session, None, None]:
+    """Get a database session."""
+    with get_db_session() as session:
         yield session
 
 
